@@ -180,7 +180,7 @@ Target
 A simplified view of the project is shown below:
 
 ```text
-OSINT_CLI/
+AI-OSINT-Investigation-Platform/
 │
 ├── api.py
 ├── investigator.py

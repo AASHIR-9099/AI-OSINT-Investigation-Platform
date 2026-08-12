@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IRONCLAD | AI OSINT Platform</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard_enhancements.css">
+
+    <!-- jsPDF - used to generate the downloadable PDF intelligence report -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="background-grid"></div>
+
+<div class="dashboard">
+
+<!-- =========================
+SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+<h2>IRONCLAD</h2>
+
+<p>Cyber Intelligence Platform</p>
+
+</div>
+
+<ul>
+
+<li class="active">
+
+<i class="fa-solid fa-chart-line"></i>
+
+Dashboard
+
+</li>
+
+<li onclick="focusSearch()">
+
+<i class="fa-solid fa-crosshairs"></i>
+
+New Investigation
+
+</li>
+
+<li onclick="openReports()">
+
+<i class="fa-solid fa-file-lines"></i>
+
+Reports
+
+</li>
+
+<li onclick="openSettings()">
+
+<i class="fa-solid fa-gear"></i>
+
+Settings
+
+</li>
+
+</ul>
+
+</aside>
+
+<!-- =========================
+MAIN CONTENT
+========================= -->
+
+<main class="content">
+
+<!-- HEADER -->
+
+<header class="topbar">
+
+<div>
+
+<h1>IRONCLAD Intelligence Center</h1>
+
+<p>
+AI Powered Open Source Intelligence Investigation Platform
+</p>
+
+</div>
+
+<div class="status">
+
+<span class="online-dot"></span>
+
+SYSTEM ONLINE
+
+</div>
+
+</header>
+
+<!-- SEARCH PANEL -->
+
+<section class="search-panel">
+
+<input
+id="target"
+type="text"
+autocomplete="off"
+placeholder="Enter Username, Email or Domain">
+
+<button onclick="scanTarget()">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+START INVESTIGATION
+
+</button>
+
+</section>
+
+<!-- PROGRESS -->
+
+<section class="panel">
+
+<h2>
+
+<i id="investigationSpinner" class="fa-solid fa-spinner"></i>
+
+Investigation Status
+
+</h2>
+
+<div class="progress">
+
+<div
+id="progressBar"
+class="progress-bar">
+
+</div>
+
+</div>
+
+<p
+id="progressText">
+
+Waiting for investigation...
+
+</p>
+
+</section>
+
+<!-- =========================
+STATISTICS
+========================= -->
+
+<section class="cards">
+
+<div class="card">
+
+<h3>Accounts Found</h3>
+
+<h1 id="accounts">
+
+0
+
+</h1>
+
+</div>
+
+<div class="card">
+
+<h3>GitHub Intelligence</h3>
+
+<h1 id="github">
+
+NONE
+
+</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Confidence</h3>
+
+<h1 id="confidence">
+
+0%
+
+</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Threat Level</h3>
+
+<h1 id="threat">
+
+LOW
+
+</h1>
+
+</div>
+
+</section>
+
+<!-- =========================
+TARGET + THREAT
+========================= -->
+
+<section class="main-grid">
+
+<div class="panel">
+
+<h2>
+
+<i class="fa-solid fa-user-secret"></i>
+
+Target Intelligence
+
+</h2>
+
+<p>
+
+<strong>Target</strong>
+
+</p>
+
+<p id="profileName">
+
+No Target Selected
+
+</p>
+
+<hr>
+
+<p>
+
+Risk :
+
+<span id="risk">
+
+Unknown
+
+</span>
+
+</p>
+
+<p>
+
+Confidence :
+
+<span id="confidenceText">
+
+0%
+
+</span>
+
+</p>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+Threat Analysis
+
+</h2>
+
+<div class="threat-circle">
+
+<span id="threatValue">
+
+LOW
+
+</span>
+
+</div>
+
+<p id="threatReason">
+
+No investigation performed.
+
+</p>
+
+</div>
+
+</section>
+
+<!-- =========================
+AI INVESTIGATION SUMMARY (Llama)
+========================= -->
+
+<section class="panel ai-summary-panel">
+
+    <h2>
+
+        <i class="fa-solid fa-brain"></i>
+
+        AI Investigation Summary
+
+        <span id="aiSummaryBadge" class="ai-risk-badge ai-risk-hidden"></span>
+
+    </h2>
+
+    <div id="aiSummary" class="ai-summary-box">
+
+        Waiting for investigation...
+
+    </div>
+
+</section>
+
+<!-- =========================
+SCAN OVERVIEW + LIVE LOG
+========================= -->
+
+<section class="bottom-grid">
+
+    <!-- SCAN OVERVIEW -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            Scan Overview
+
+        </h2>
+
+        <div id="summary">
+
+            Waiting for investigation...
+
+        </div>
+
+    </div>
+
+    <!-- LIVE LOG -->
+
+    <div class="panel">
+
+        <h2>
+
+            <i class="fa-solid fa-terminal"></i>
+
+            Live Investigation Log
+
+        </h2>
+
+        <div
+            id="loading"
+            class="terminal">
+
+            System Ready...
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =========================
+SOCIAL ACCOUNTS
+========================= -->
+
+<section class="panel">
+
+    <h2>
+
+        <i class="fa-solid fa-globe"></i>
+
+        Social Accounts
+
+    </h2>
+
+    <div id="socialResults">
+
+        No investigation performed.
+
+    </div>
+
+</section>
+
+<!-- =========================
+GITHUB INTELLIGENCE
+========================= -->
+
+<section class="panel">
+
+    <h2>
+
+        <i class="fa-brands fa-github"></i>
+
+        GitHub Intelligence
+
+    </h2>
+
+    <div id="githubResults">
+
+        No GitHub intelligence available.
+
+    </div>
+
+</section>
+
+<!-- =========================
+BREACH INTELLIGENCE (HIBP)
+========================= -->
+
+<section class="panel">
+
+    <h2>
+
+        <i class="fa-solid fa-key"></i>
+
+        Password/Email Breach Intelligence (HIBP)
+
+    </h2>
+
+    <div id="hibpResults">
+
+        No investigation performed.
+
+    </div>
+
+</section>
+
+<!-- =========================
+REPORT DOWNLOAD
+========================= -->
+
+<section class="panel report-panel">
+
+    <h2>
+
+        <i class="fa-solid fa-download"></i>
+
+        Export Intelligence Report
+
+    </h2>
+
+    <div class="download-buttons">
+
+        <button
+            class="download"
+            onclick="downloadJSON()">
+
+            <i class="fa-solid fa-file-code"></i>
+
+            Download JSON
+
+        </button>
+
+        <button
+            class="download"
+            onclick="downloadCSV()">
+
+            <i class="fa-solid fa-file-csv"></i>
+
+            Download CSV
+
+        </button>
+
+        <button
+            class="download"
+            onclick="downloadPDF()">
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            Download PDF
+
+        </button>
+
+    </div>
+
+</section>
+
+<!-- =========================
+RAW OUTPUT
+========================= -->
+
+<section class="panel">
+
+    <h2>
+
+        <i class="fa-solid fa-database"></i>
+
+        Raw Intelligence Output
+
+    </h2>
+
+    <pre id="result">
+
+No investigation started.
+
+    </pre>
+
+</section>
+
+</main>
+
+</div>
+
+<!-- =========================
+SETTINGS MODAL
+========================= -->
+
+<div id="settingsOverlay" class="modal-overlay hidden">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-gear"></i> Settings</h2>
+            <button class="modal-close" onclick="closeSettings()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <label for="settingApiUrl">Backend API URL</label>
+            <input id="settingApiUrl" type="text" placeholder="http://127.0.0.1:8000">
+
+            <label for="settingPollInterval">Progress Poll Interval (ms)</label>
+            <input id="settingPollInterval" type="number" min="200" step="100" placeholder="700">
+
+            <label for="settingTheme">Theme</label>
+            <select id="settingTheme">
+                <option value="dark">Dark (default)</option>
+                <option value="light">Light</option>
+            </select>
+
+            <div class="modal-status">
+                <span id="backendStatusDot" class="status-dot"></span>
+                <span id="backendStatusText">Backend status: unknown</span>
+                <button class="link-btn" onclick="checkBackendStatus()">Test Connection</button>
+            </div>
+
+            <hr>
+
+            <button class="danger-btn" onclick="clearAllSettings()">
+                <i class="fa-solid fa-trash"></i>
+                Clear All Saved Data
+            </button>
+
+            <p class="settings-footnote">IRONCLAD v1.0 &middot; Cyber Intelligence Platform</p>
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="download" onclick="saveSettings()">Save Settings</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+<script src="dashboard_enhancements.js"></script>
+
+</body>
+
+</html>

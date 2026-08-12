@@ -1,4 +1,4 @@
-AI-Powered OSINT Investigation Platform
+AI-Powered OSINT Investigation Platform 
 
 An AI-powered Open-Source Intelligence (OSINT) Investigation Platform that combines multiple OSINT tools into a unified investigation workflow with automated result processing, account verification, evidence-based confidence scoring, and locally hosted AI-assisted analysis.
 
